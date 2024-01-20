@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator</title>
+    <style>
+      :root {
+        --main-bgColor: #120d2f;
+        --main-color: white;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Permanent MK", cursive;
+        text-align: center;
+      }
+      body {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-image: linear-gradient(0deg, #070041, #297fa5, #0e0f49);
+      }
+      .calculator {
+        width: 200px;
+        height: 300px;
+        margin: auto;
+        background-color: var(--main-bgColor);
+        color: var(--main-color);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+      .output {
+        background-color: #222;
+        max-height: 35px;
+        max-width: 90%;
+        margin: 5%;
+        padding: 8px;
+        border: 1px blue solid;
+        border-radius: 10px;
+        color: #297fa5;
+        outline: none;
+        text-align: right;
+        overflow: auto;
+        transition: all 0.5s;
+        font-size: 13px;
+      }
+      .output::after {
+        content: "|";
+        font-size: 15px;
+        animation: opac 0.5s infinite linear alternate;
+      }
+      .btns {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        height: 240px;
+        margin-top: 15px;
+      }
+      .btn {
+        line-height: 47.19px;
+        background-color: #070041;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: scale 0.5s;
+      }
+      .btn:hover {
+        background-color: #050124;
+      }
+      .btn:last-child {
+        grid-row: 4 / 6;
+        grid-column: 4/5;
+        line-height: 96px;
+      }
+      .btn:first-child,
+      .btn:last-child,
+      .btn:nth-child(4) {
+        background-color: rgba(21, 67, 250, 0.267);
+        border-radius: 0%;
+      }
+
+      @keyframes opac {
+        0% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="animation">My Calculator</div>
+    <div class="calculator">
+      <div class="output"></div>
+      <div class="btns">
+        <div class="btn" onclick="clearOutput()">AC</div>
+        <div class="btn" onclick="calc(this)"><pre> / </pre></div>
+        <div class="btn" onclick="calc(this)"><pre> * </pre></div>
+        <div class="btn" onclick="del()">&lt;-</div>
+
+        <div class="btn" onclick="calc(this)">7</div>
+        <div class="btn" onclick="calc(this)">8</div>
+        <div class="btn" onclick="calc(this)">9</div>
+        <div class="btn" onclick="calc(this)"><pre> - </pre></div>
+
+        <div class="btn" onclick="calc(this)">4</div>
+        <div class="btn" onclick="calc(this)">5</div>
+        <div class="btn" onclick="calc(this)">6</div>
+        <div class="btn" onclick="calc(this)"><pre> + </pre></div>
+
+        <div class="btn" onclick="calc(this)">1</div>
+        <div class="btn" onclick="calc(this)">2</div>
+        <div class="btn" onclick="calc(this)">3</div>
+
+        <div class="btn" onclick="calc(this)"><pre> % </pre></div>
+        <div class="btn" onclick="calc(this)">0</div>
+        <div class="btn" onclick="calc(this)">.</div>
+        <div class="btn" onclick="result()"><pre> = </pre></div>
+      </div>
+    </div>
+
+    <script>
+      const output = document.querySelector(".output");
+      const operators = ["+", "-", "*", "/", "%","."];
+      let checked = true;
+
+      function calc(btn) {
+        check(btn);
+        if (checked) {
+          if (output.textContent.length > 0) {
+            output.textContent += btn.textContent;
+          } else {
+            if (!operators.slice(2).includes(btn.textContent.trim())) {
+              output.textContent += btn.textContent.trim();
+            }
+          }            
+        } else {
+        
+          checked = true;
+        }
+      }
+
+      function result() {
+        try {
+          output.textContent = `${eval(output.textContent)}`;
+        } catch (e) {
+          output.textContent = `${eval(output.textContent.slice(0, -2))}`;
+        }
+      }
+
+      function del() {
+        if (operators.includes(output.textContent.slice(-2).trim())) {
+          output.textContent = output.textContent.slice(0, -2);
+        }
+        output.textContent = output.textContent.slice(0, -1);
+      }
+
+      function clearOutput() {
+        output.textContent = "";
+      }
+
+      function check(btn) {
+        if (operators.includes(btn.textContent.slice(-2).trim())) {
+          if (operators.includes(output.textContent.slice(-2).trim())) {
+            checked = false;
+          }
+        }
+      }
+
+      document.body.oncontextmenu = (e) => e.preventDefault();
+      document.body.onpointermove = (e) => e.preventDefault();
+      
+
+      //Text Animation
+
+      let j = 50;
+
+      function charAnim(sentences, place, speed) {
+        for (let num = 0; num <= sentences.length; num++) {
+          for (let sentence of sentences) {
+            liste = sentence.split("");
+
+            let newList = [];
+            for (let i = sentence.length - 1; i >= 0; i--) {
+              newList.push(sentence.slice(0, i));
+            }
+            liste.map((word) => {
+              setTimeout(write, j, word, place);
+              j += speed;
+            });
+            newList.map((word) => {
+              setTimeout(write, j, "", place);
+              setTimeout(write, j, word, place);
+              j += speed;
+            });
+          }
+        }
+      }
+      let word = "";
+      function write(text, place) {
+        if (text === "") {
+          word = text;
+        } else {
+          word += text;
+        }
+        return (place.innerHTML = word);
+      }
+
+      let content = document.getElementById("animation");
+      const mov = setInterval(charAnim, j, [content.textContent], content, 400);
+
+      const style1 = document.createElement("style");
+      style1.textContent = `
+  #animation::after{
+  content: "|";
+  font-size: 40px;
+  animation: opacity 0.5s infinite linear alternate;
+  }
+  #animation {
+    display: block;
+    position: absolute;
+    top: 70px;
+    font-size: 38px;
+    color: steelblue;
+  }
+  @keyframes opacity {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }`;
+
+      document.head.appendChild(style1);
+    </script>
+  </body>
+</html>
